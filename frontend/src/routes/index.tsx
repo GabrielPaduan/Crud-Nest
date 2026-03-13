@@ -1,10 +1,14 @@
 import { Route, Routes } from 'react-router-dom'
-import { Login } from '../pages/login'
+import { Cadastro } from '../pages/Cadastro'
+import { Visualizar } from '../pages/Visualizar'
+import { Editar } from '../pages/Editar'
 
 export const AppRoutes = () => {
     return (
         <Routes>
-            <Route path="/" element={<Login />} />
+            <Route path="/cadastro" element={<Cadastro />} />
+            <Route path="/" element={<Visualizar />} />
+            <Route path="/editar/:id" element={<Editar />} />
         </Routes>
     )
 }

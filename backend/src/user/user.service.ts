@@ -12,6 +12,13 @@ export class UserService {
         return this.users;
     }
 
+    getUserById(id: number): UserDto {
+        console.log(id)
+        const user = this.users.find(user => user.id === id);
+         console.log(user)
+        return user as UserDto;
+    }
+
     createUser(userName: string): UserDto {
         const userDto: UserDto = {
             id: this.users.length + 1,
@@ -19,5 +26,16 @@ export class UserService {
         }
         this.users.push(userDto);
         return userDto;
+    }
+
+    updateUser(updateUser: UserDto): UserDto {
+        this.users = this.users.map(user => {
+            if (user.id === updateUser.id) {
+                return { id: updateUser.id, name: updateUser.name }
+            }
+            return user;
+        })
+        const userUpdated = this.users.find(user => user.id === updateUser.id);
+        return userUpdated as UserDto;
     }
 }
