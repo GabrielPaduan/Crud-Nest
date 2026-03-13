@@ -13,9 +13,7 @@ export class UserService {
     }
 
     getUserById(id: number): UserDto {
-        console.log(id)
-        const user = this.users.find(user => user.id === id);
-         console.log(user)
+        const user = this.users.find(user => Number(user.id) === Number(id));
         return user as UserDto;
     }
 
@@ -31,11 +29,16 @@ export class UserService {
     updateUser(updateUser: UserDto): UserDto {
         this.users = this.users.map(user => {
             if (user.id === updateUser.id) {
-                return { id: updateUser.id, name: updateUser.name }
+                return { id: user.id, name: updateUser.name }
             }
+            
             return user;
         })
         const userUpdated = this.users.find(user => user.id === updateUser.id);
         return userUpdated as UserDto;
+    }
+
+    deleteUser(id: number): void {
+        this.users = this.users.filter(user => Number(user.id) !== Number(id))
     }
 }

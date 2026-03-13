@@ -8,7 +8,7 @@ export const getUsers = async () =>{
 }
 
 export const getUserById = async (id: number) => {
-    const response = await api.get(`/user/getById/${id}`)
+    const response = await api.get(`/user/${id}`)
     return response.data
 }
 
@@ -18,6 +18,10 @@ export const createUser = async (name: string) => {
 }
 
 export const updateUser = async (user: UserDto) => {
-    const response = await api.put(`/user/${user.id}`, { name: user.name })
+    const response = await api.put(`/user`, {user})
     return response.data
+}
+
+export const deleteUser = async (id: number) => {
+    await api.delete(`/user/${id}`)
 }
