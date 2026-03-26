@@ -7,25 +7,23 @@ export class UserController {
     constructor(private usersService: UserService) {}
 
     @Get() 
-    getUsers(): userDto.UserDto[] {
+    getUsers(): Promise<userDto.UserDto[]> {
         return this.usersService.getUsers();
     }
 
     @Get(':id')
-    getUserById(@Param('id') id: number): userDto.UserDto {
+    getUserById(@Param('id') id: number): Promise<userDto.UserDto> {
         return this.usersService.getUserById(id);
     }
 
     @Post()
-    createUser(@Body('name') userName: string): userDto.UserDto {
-        const userCreated = this.usersService.createUser(userName);
-        return userCreated;
+    createUser(@Body('name') userName: string): void {
+        this.usersService.createUser(userName);
     }
 
     @Put()
-    updateUser(@Body('user') user: userDto.UserDto): userDto.UserDto {
-        const userUpdated = this.usersService.updateUser(user);
-        return userUpdated;
+    updateUser(@Body('user') user: userDto.UserDto): void {
+        this.usersService.updateUser(user);
     }
 
     @Delete(':id')

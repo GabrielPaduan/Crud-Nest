@@ -1,44 +1,37 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { UserDto } from "./dto/user-dto";
+import { DrizzleAsyncProvider } from "src/drizzle/drizzle.provider";
+import * as schema from "../db/schema"
+import { NodePgDatabase } from "drizzle-orm/node-postgres";
+import * as q from 'drizzle-orm'
 
 @Injectable()
 export class UserService {
-    private users: UserDto[] = [
-        { id: 1, name: "John Doe" },
-        { id: 2, name: "Jane Doe" },
-    ];
+    constructor(
+        @Inject(DrizzleAsyncProvider)
+        private db: NodePgDatabase<typeof schema>
+    ) {}
 
-    getUsers(): UserDto[] {
-        return this.users;
+    async getUsers(): Promise<UserDto[]> {
+        return await this.db.select().from(schema.userTable) 
     }
 
-    getUserById(id: number): UserDto {
-        const user = this.users.find(user => Number(user.id) === Number(id));
-        return user as UserDto;
+    async getUserById(id: number): Promise<UserDto> {
+        const filteredUsers = await this.db.select().from(schema.userTable).where(q.eq(schema.userTable.id, id))
+        return filteredUsers[0];
     }
 
-    createUser(userName: string): UserDto {
-        const userDto: UserDto = {
-            id: this.users.length + 1,
+    async createUser(userName: string): Promise<void> {
+        await this.db.insert(schema.userTable).values({
             name: userName,
-        }
-        this.users.push(userDto);
-        return userDto;
-    }
-
-    updateUser(updateUser: UserDto): UserDto {
-        this.users = this.users.map(user => {
-            if (user.id === updateUser.id) {
-                return { id: user.id, name: updateUser.name }
-            }
-            
-            return user;
         })
-        const userUpdated = this.users.find(user => user.id === updateUser.id);
-        return userUpdated as UserDto;
     }
 
-    deleteUser(id: number): void {
-        this.users = this.users.filter(user => Number(user.id) !== Number(id))
+    async updateUser(updateUser: UserDto): Promise<void> {
+        await this.db.update(schema.userTable).set({ name: updateUser.name}).where(q.eq(schema.userTable.id, updateUser.id));
+    }
+
+    async deleteUser(id: number): Promise<void> {
+        await this.db.delete(schema.userTable).where(q.eq(schema.userTable.id, id));
     }
 }
